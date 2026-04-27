@@ -4,37 +4,402 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Program Gym 5 Hari</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
-
 <style>
-:root {
-  --bg: #eaf6ff;
-  --card: #ffffff;
-  --accent: #4da6ff;
-  --text: #0a2540;
-  --muted: #7a9bbd;
-}
+  :root {
+    --bg: #0a0a0a;
+    --card: #111111;
+    --accent: #e8ff00;
+    --accent2: #ff4d00;
+    --text: #f0f0f0;
+    --muted: #666;
+    --border: #222;
+  }
 
-.light {
-  --bg: #ffffff;
-  --card: #f5fbff;
-  --text: #0a2540;
-  --muted: #9bb3c9;
-}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
-  background: linear-gradient(to bottom, #eaf6ff, #ffffff);
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  padding: 20px;
-  transition: 0.3s;
-}
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    padding: 24px 16px 60px;
+  }
 
-h1 {
-  font-family: 'Bebas Neue';
-  font-size: 60px;
-  text-align: center;
+  header {
+    text-align: center;
+    padding: 40px 0 32px;
+    position: relative;
+  }
+
+  .label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 12vw, 96px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    color: var(--text);
+  }
+
+  h1 span {
+    color: var(--accent);
+    display: block;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 16px;
+    font-weight: 300;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--accent2);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 2px;
+    margin-top: 16px;
+  }
+
+  /* Day tabs */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin-bottom: 24px;
+    scrollbar-width: none;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    flex-shrink: 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .tab:hover { border-color: #444; color: var(--text); }
+
+  .tab.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* Day cards */
+  .day-content { display: none; max-width: 700px; margin: 0 auto; }
+  .day-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .day-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 24px;
+    background: var(--card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .day-header::before {
+    content: attr(data-num);
+    position: absolute;
+    right: -10px;
+    top: -20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 140px;
+    color: var(--accent);
+    opacity: 0.04;
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .day-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+
+  .day-muscle {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  .day-tip {
+    font-size: 12px;
+    color: var(--muted);
+    max-width: 200px;
+    text-align: right;
+    line-height: 1.5;
+  }
+
+  /* Exercise list */
+  .exercises { display: flex; flex-direction: column; gap: 10px; }
+
+  .exercise {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: border-color 0.2s;
+  }
+
+  .exercise:hover { border-color: #333; }
+
+  .ex-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--accent);
+    opacity: 0.5;
+    min-width: 32px;
+    line-height: 1;
+  }
+
+  .ex-info { flex: 1; }
+
+  .ex-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .ex-detail {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .ex-badge {
+    background: #1a1a1a;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .ex-badge span {
+    display: block;
+    font-size: 10px;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* Tips section */
+  .tips-section {
+    max-width: 700px;
+    margin: 32px auto 0;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .tips-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .tip-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: #bbb;
+    line-height: 1.5;
+  }
+
+  .tip-icon { color: var(--accent); font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 12px 0;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="label">5-Day Split Program</div>
+  <h1>BUILD<span>MUSCLE</span></h1>
+  <p class="subtitle">Program pembentukan otot — Senin sampai Jumat</p>
+  <div class="badge">Intermediate · Hypertrophy Focus</div>
+</header>
+
+<!-- TABS -->
+<div class="tabs" id="tabs">
+  <button class="tab active" onclick="showDay(0)">Senin</button>
+  <button class="tab" onclick="showDay(1)">Selasa</button>
+  <button class="tab" onclick="showDay(2)">Rabu</button>
+  <button class="tab" onclick="showDay(3)">Kamis</button>
+  <button class="tab" onclick="showDay(4)">Jumat</button>
+</div>
+
+<!-- SENIN: DADA + TRISEP -->
+<div class="day-content active" id="day-0">
+  <div class="day-header" data-num="1">
+    <div>
+      <div class="day-title">Senin</div>
+      <div class="day-muscle">Dada · Trisep</div>
+    </div>
+    <div class="day-tip">Push day — fokus kontraksi penuh di dada</div>
+  </div>
+  <div class="exercises">
+    <div class="exercise"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Bench Press (Barbell)</div><div class="ex-detail">Compound utama · Istirahat 90–120 detik</div></div><div class="ex-badge">4 Set<span>6–10 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Incline Dumbbell Press</div><div class="ex-detail">Upper chest · Sudut 30–45°</div></div><div class="ex-badge">3 Set<span>10–12 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Cable Flye / Pec Deck</div><div class="ex-detail">Isolasi dada · Squeeze di puncak</div></div><div class="ex-badge">3 Set<span>12–15 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Tricep Pushdown (Cable)</div><div class="ex-detail">Trisep · Siku tetap di sisi tubuh</div></div><div class="ex-badge">3 Set<span>12–15 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Overhead Tricep Extension</div><div class="ex-detail">Long head trisep · Kontrol turunnya</div></div><div class="ex-badge">3 Set<span>12–15 Rep</span></div></div>
+  </div>
+</div>
+
+<!-- SELASA: PUNGGUNG + BISEP -->
+<div class="day-content" id="day-1">
+  <div class="day-header" data-num="2">
+    <div>
+      <div class="day-title">Selasa</div>
+      <div class="day-muscle">Punggung · Bisep</div>
+    </div>
+    <div class="day-tip">Pull day — bayangkan siku menarik, bukan tangan</div>
+  </div>
+  <div class="exercises">
+    <div class="exercise"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Deadlift / Barbell Row</div><div class="ex-detail">Compound utama · Punggung lurus</div></div><div class="ex-badge">4 Set<span>6–8 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Lat Pulldown</div><div class="ex-detail">Lebar punggung · Tarik ke dada bawah</div></div><div class="ex-badge">3 Set<span>10–12 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Seated Cable Row</div><div class="ex-detail">Tebal punggung · Squeeze di belakang</div></div><div class="ex-badge">3 Set<span>10–12 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Barbell / Dumbbell Curl</div><div class="ex-detail">Bisep · Siku jangan goyang</div></div><div class="ex-badge">3 Set<span>10–12 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Hammer Curl</div><div class="ex-detail">Brachialis + bisep · Grip netral</div></div><div class="ex-badge">3 Set<span>12 Rep</span></div></div>
+  </div>
+</div>
+
+<!-- RABU: KAKI -->
+<div class="day-content" id="day-2">
+  <div class="day-header" data-num="3">
+    <div>
+      <div class="day-title">Rabu</div>
+      <div class="day-muscle">Kaki · Glutes · Calves</div>
+    </div>
+    <div class="day-tip">Leg day — jangan di-skip, kaki = 50% tubuhmu</div>
+  </div>
+  <div class="exercises">
+    <div class="exercise"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Squat (Barbell)</div><div class="ex-detail">Raja latihan kaki · Turun parallel</div></div><div class="ex-badge">4 Set<span>6–10 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Romanian Deadlift</div><div class="ex-detail">Hamstring + glutes · Punggung lurus</div></div><div class="ex-badge">3 Set<span>10–12 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Leg Press</div><div class="ex-detail">Quad dominant · Jangan kunci lutut</div></div><div class="ex-badge">3 Set<span>12–15 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Leg Curl (Machine)</div><div class="ex-detail">Hamstring isolasi</div></div><div class="ex-badge">3 Set<span>12–15 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Standing Calf Raise</div><div class="ex-detail">Betis · Full range of motion</div></div><div class="ex-badge">4 Set<span>15–20 Rep</span></div></div>
+  </div>
+</div>
+
+<!-- KAMIS: BAHU + TRAPEZIUS -->
+<div class="day-content" id="day-3">
+  <div class="day-header" data-num="4">
+    <div>
+      <div class="day-title">Kamis</div>
+      <div class="day-muscle">Bahu · Trapezius</div>
+    </div>
+    <div class="day-tip">Shoulder day — kontrol, bukan momentum</div>
+  </div>
+  <div class="exercises">
+    <div class="exercise"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Overhead Press (Barbell/DB)</div><div class="ex-detail">Compound bahu · Core dikencangkan</div></div><div class="ex-badge">4 Set<span>8–10 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Lateral Raise (Dumbbell)</div><div class="ex-detail">Side delt · Angkat sampai sejajar bahu</div></div><div class="ex-badge">4 Set<span>12–15 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Face Pull (Cable)</div><div class="ex-detail">Rear delt + rotator cuff · Penting!</div></div><div class="ex-badge">3 Set<span>15 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Shrug (Barbell/DB)</div><div class="ex-detail">Trapezius · Tahan 1 detik di atas</div></div><div class="ex-badge">3 Set<span>12–15 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Rear Delt Flye</div><div class="ex-detail">Posterior delt · Sedikit membungkuk</div></div><div class="ex-badge">3 Set<span>15 Rep</span></div></div>
+  </div>
+</div>
+
+<!-- JUMAT: FULL BODY / LAGGING PARTS -->
+<div class="day-content" id="day-4">
+  <div class="day-header" data-num="5">
+    <div>
+      <div class="day-title">Jumat</div>
+      <div class="day-muscle">Full Body · Lagging Parts</div>
+    </div>
+    <div class="day-tip">Akhiri pekan dengan latihan yang paling butuh perbaikan</div>
+  </div>
+  <div class="exercises">
+    <div class="exercise"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Pull-Up / Chin-Up</div><div class="ex-detail">Punggung + bisep · Full ROM</div></div><div class="ex-badge">3 Set<span>Max Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Dips (Weighted jika bisa)</div><div class="ex-detail">Dada bawah + trisep</div></div><div class="ex-badge">3 Set<span>10–12 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Lunges / Bulgarian Split Squat</div><div class="ex-detail">Kaki unilateral · Latih keseimbangan</div></div><div class="ex-badge">3 Set<span>10 Rep/sisi</span></div></div>
+    <div class="exercise"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Lagging Muscle (bebas pilih)</div><div class="ex-detail">Titik lemah kamu · Prioritaskan ini</div></div><div class="ex-badge">3 Set<span>10–15 Rep</span></div></div>
+    <div class="exercise"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Plank / Ab Wheel / Cable Crunch</div><div class="ex-detail">Core · Tutup sesi dengan kuat</div></div><div class="ex-badge">3 Set<span>30–60 dtk</span></div></div>
+  </div>
+</div>
+
+<!-- TIPS -->
+<div class="tips-section">
+  <div class="tips-title">Tips Penting</div>
+  <div class="tip-item"><div class="tip-icon">⚡</div><div><strong>Progressive Overload</strong> — naikkan beban atau rep setiap 1–2 minggu. Ini kunci utama tumbuhnya otot.</div></div>
+  <div class="divider"></div>
+  <div class="tip-item"><div class="tip-icon">🍗</div><div><strong>Protein cukup</strong> — targetkan 1.6–2g protein per kg berat badan. Tanpa ini, otot tidak tumbuh.</div></div>
+  <div class="divider"></div>
+  <div class="tip-item"><div class="tip-icon">😴</div><div><strong>Tidur 7–9 jam</strong> — otot tumbuh saat istirahat, bukan saat latihan.</div></div>
+  <div class="divider"></div>
+  <div class="tip-item"><div class="tip-icon">🔁</div><div><strong>Istirahat antar set</strong> — 60–90 detik untuk isolasi, 90–120 detik untuk compound.</div></div>
+  <div class="divider"></div>
+  <div class="tip-item"><div class="tip-icon">📅</div><div><strong>Sabtu & Minggu</strong> — aktif recovery: jalan kaki, stretching, atau yoga ringan. Jangan total diam.</div></div>
+</div>
+
+<script>
+  function showDay(idx) {
+    document.querySelectorAll('.day-content').forEach((el, i) => {
+      el.classList.toggle('active', i === idx);
+    });
+    document.querySelectorAll('.tab').forEach((el, i) => {
+      el.classList.toggle('active', i === idx);
+    });
+  }
+</script>
+
+</body>
+</html>  text-align: center;
 }
 
 .tabs {
